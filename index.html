@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多平台討論區搜尋工具</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1rem 2rem;
+    }
+
+    header h1 {
+      color: #333;
+      font-size: 1.5rem;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      width: 100%;
+    }
+
+    .search-section {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    .search-section h2 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .search-section p {
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .search-form input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .search-form input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .search-form button {
+      padding: 0.75rem 2rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: 600;
+    }
+
+    .search-form button:hover:not(:disabled) {
+      background: #764ba2;
+    }
+
+    .search-form button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .forum-results {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .forum-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+    }
+
+    .forum-header h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .forum-header p {
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+
+    .forum-content {
+      padding: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f5f5f5;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #ddd;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background: #f9f9f9;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    a {
+      color: #667eea;
+      text-decoration: none;
+      word-break: break-word;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+
+    .url-text {
+      color: #999;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #999;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.1);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: auto;
+    }
+
+    @media (max-width: 1200px) {
+      .results-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
+
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .results-container {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        padding: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔍 多平台討論區搜尋工具</h1>
+  </header>
+
+  <main>
+    <div class="search-section">
+      <h2>多平台討論區搜尋工具</h2>
+      <p>同時搜尋 Dcard、PTT 和 Mobile01 的討論內容</p>
+
+      <form class="search-form" id="searchForm">
+        <input
+          type="text"
+          id="keyword"
+          placeholder="輸入搜尋關鍵字..."
+          required
+        >
+        <button type="submit" id="searchBtn">搜尋</button>
+      </form>
+
+      <div id="errorContainer"></div>
+      <div id="resultsContainer"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 多平台討論區搜尋工具。所有搜尋結果由 Google 搜尋提供。</p>
+  </footer>
+
+  <script>
+    const API_URL = '/api/search';
+
+    const searchForm = document.getElementById('searchForm');
+    const keywordInput = document.getElementById('keyword');
+    const searchBtn = document.getElementById('searchBtn');
+    const errorContainer = document.getElementById('errorContainer');
+    const resultsContainer = document.getElementById('resultsContainer');
+
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const keyword = keywordInput.value.trim();
+      if (!keyword) return;
+
+      // 清空之前的結果
+      errorContainer.innerHTML = '';
+      resultsContainer.innerHTML = '';
+
+      searchBtn.disabled = true;
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ keyword }),
+        });
+
+        if (!response.ok) {
+          throw new Error('搜尋失敗');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          displayResults(data.data);
+        } else {
+          errorContainer.innerHTML = `<div class="error">${data.error || '搜尋失敗'}</div>`;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorContainer.innerHTML = `<div class="error">搜尋失敗：${error.message}</div>`;
+      } finally {
+        searchBtn.disabled = false;
+      }
+    });
+
+    function displayResults(results) {
+      const html = Object.entries(results)
+        .map(([forum, items]) => {
+          let contentHtml = '';
+
+          if (items.length === 0) {
+            contentHtml = '<div class="empty-state">未找到相關結果</div>';
+          } else {
+            const rows = items
+              .map(
+                (item, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td>
+                  <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+                    ${escapeHtml(item.title)}
+                  </a>
+                  <span class="url-text">${escapeHtml(item.url)}</span>
+                </td>
+              </tr>
+            `
+              )
+              .join('');
+
+            contentHtml = `
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">序號</th>
+                    <th>標題 / 連結</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+            `;
+          }
+
+          return `
+            <div class="forum-results">
+              <div class="forum-header">
+                <h3>${forum}</h3>
+                <p>${items.length} 個搜尋結果</p>
+              </div>
+              <div class="forum-content">
+                ${contentHtml}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      resultsContainer.innerHTML = `<div class="results-container">${html}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

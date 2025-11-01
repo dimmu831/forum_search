@@ -1,0 +1,25 @@
+{
+  "name": "forum_search",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "s3://vida-prod-gitrepo/webdev-git/310419663032603952/RMc8f7gqLqS94BBT46qbkr"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.13.1",
+    "cheerio": "^1.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "puppeteer": "^24.27.0",
+    "serpapi": "^2.2.1"
+  }
+}
