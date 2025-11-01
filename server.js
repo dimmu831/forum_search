@@ -95,7 +95,24 @@ app.get('/health', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Open http://localhost:${PORT} in your browser`);
+
+// 啟動伺服器
+const server = app.listen(PORT, () => {
+  console.log(`[INFO] Server running on port ${PORT}`);
+  console.log(`[INFO] SERPAPI_API_KEY: ${process.env.SERPAPI_API_KEY ? '✓ Set' : '✗ Not set'}`);
+});
+
+// 錯誤處理
+server.on('error', (err) => {
+  console.error('[ERROR] Server error:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[ERROR] Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[ERROR] Uncaught Exception:', error);
+  process.exit(1);
 });
